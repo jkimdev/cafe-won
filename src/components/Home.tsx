@@ -28,6 +28,16 @@ const Home: React.FC = () => {
           <p>• 신선한 원두로 내린 커피</p>
           <p>• 친환경 포장</p>
         </div>
+
+        {/* 관리자 로그인 링크 */}
+        <div className="mt-6 pt-6 border-t border-gray-200">
+          <button
+            onClick={() => navigate('/admin/login')}
+            className="text-sm text-gray-400 hover:text-gray-600 transition-colors duration-200"
+          >
+            관리자 로그인
+          </button>
+        </div>
       </div>
     </div>
   );
