@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { menuItems } from '../data/menuData';
-import { useCart } from '../contexts/CartContext';
+import { menuService } from '../firebase/config';
 import type { MenuItem } from '../types';
+import { useCart } from '../contexts/CartContext';
 
 const MenuDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -10,14 +10,56 @@ const MenuDetail: React.FC = () => {
   const { dispatch } = useCart();
   const [quantity, setQuantity] = useState(1);
   const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({});
+  const [menuItem, setMenuItem] = useState<MenuItem | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const menuItem = menuItems.find(item => item.id === id);
+  useEffect(() => {
+    const fetchMenuItem = async () => {
+      if (!id) return;
+      
+      try {
+        setLoading(true);
+        setError(null);
+        
+        // Firestore에서 모든 메뉴를 가져와서 해당 ID의 메뉴를 찾기
+        const menus = await menuService.getMenus();
+        const foundItem = menus.find(item => item.id === id);
+        
+        if (foundItem) {
+          setMenuItem(foundItem);
+        } else {
+          setError('메뉴를 찾을 수 없습니다');
+        }
+      } catch (err) {
+        console.error('메뉴 데이터를 가져오는 중 오류 발생:', err);
+        setError('메뉴 데이터를 불러오는데 실패했습니다.');
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  if (!menuItem) {
+    fetchMenuItem();
+  }, [id]);
+
+  if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-800 mb-4">메뉴를 찾을 수 없습니다</h1>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">메뉴를 불러오는 중...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !menuItem) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-gray-800 mb-4">
+            {error || '메뉴를 찾을 수 없습니다'}
+          </h1>
           <button
             onClick={() => navigate('/menu')}
             className="bg-orange-600 text-white px-6 py-2 rounded-lg hover:bg-orange-700"
@@ -63,6 +105,21 @@ const MenuDetail: React.FC = () => {
     return price.toLocaleString('ko-KR');
   };
 
+  const getMenuIcon = (category: string) => {
+    switch (category) {
+      case 'coffee':
+        return '☕';
+      case 'non-coffee':
+        return '🥤';
+      case 'dessert':
+        return '🍰';
+      case 'food':
+        return '🥪';
+      default:
+        return '☕';
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* 헤더 */}
@@ -84,15 +141,26 @@ const MenuDetail: React.FC = () => {
         {/* 메뉴 이미지 */}
         <div className="bg-white rounded-lg shadow-md overflow-hidden mb-6">
           <div className="h-64 bg-orange-100 flex items-center justify-center">
-            <span className="text-6xl">☕</span>
+            {menuItem.image ? (
+              <img 
+                src={menuItem.image} 
+                alt={menuItem.name}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <span className="text-6xl">{getMenuIcon(menuItem.category)}</span>
+            )}
           </div>
         </div>
 
         {/* 메뉴 정보 */}
         <div className="bg-white rounded-lg shadow-md p-6 mb-6 text-left">
           <h2 className="text-2xl font-bold text-gray-800 mb-2">{menuItem.name}</h2>
-          <p className="text-gray-600 mb-4">{menuItem.description}</p>
-          <div className="text-2xl font-bold text-orange-600 mb-6 text-left`">
+          <p className="text-gray-600 mb-2">{menuItem.nameEn}</p>
+          {menuItem.description && (
+            <p className="text-gray-600 mb-4">{menuItem.description}</p>
+          )}
+          <div className="text-2xl font-bold text-orange-600 mb-6 text-left">
             ₩{formatPrice(menuItem.price)}
           </div>
 
@@ -145,9 +213,14 @@ const MenuDetail: React.FC = () => {
         {/* 장바구니 담기 버튼 */}
         <button
           onClick={handleAddToCart}
-          className="w-full bg-orange-600 text-white font-bold py-4 px-8 rounded-lg text-lg hover:bg-orange-700 transition-colors"
+          disabled={!menuItem.isAvailable}
+          className={`w-full font-bold py-4 px-8 rounded-lg text-lg transition-colors ${
+            menuItem.isAvailable
+              ? 'bg-orange-600 text-white hover:bg-orange-700'
+              : 'bg-gray-400 text-gray-600 cursor-not-allowed'
+          }`}
         >
-          장바구니에 담기
+          {menuItem.isAvailable ? '장바구니에 담기' : '품절'}
         </button>
       </div>
     </div>

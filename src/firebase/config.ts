@@ -23,7 +23,7 @@ export interface MenuService {
 export const menuService: MenuService = {
   // 메뉴 목록 조회
   getMenus: async () => {
-    const querySnapshot = await getDocs(collection(db, 'menus'));
+    const querySnapshot = await getDocs(collection(db, 'menu'));
     return querySnapshot.docs.map((doc: any) => ({
       id: doc.id,
       ...doc.data()
@@ -32,18 +32,18 @@ export const menuService: MenuService = {
   
   // 메뉴 추가
   addMenu: async (menuData: any) => {
-    return await addDoc(collection(db, 'menus'), menuData);
+    return await addDoc(collection(db, 'menu'), menuData);
   },
   
   // 메뉴 수정
   updateMenu: async (id: string, menuData: any) => {
-    const menuRef = doc(db, 'menus', id);
+    const menuRef = doc(db, 'menu', id);
     return await updateDoc(menuRef, menuData);
   },
   
   // 메뉴 삭제
   deleteMenu: async (id: string) => {
-    const menuRef = doc(db, 'menus', id);
+    const menuRef = doc(db, 'menu', id);
     return await deleteDoc(menuRef);
   }
 };
