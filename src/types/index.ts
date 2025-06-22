@@ -6,6 +6,8 @@ export interface MenuItem {
   price: number;
   category: string;
   image: string;
+  isAvailable: boolean;
+  order: number;
   options?: MenuOption[];
 }
 
@@ -13,6 +15,7 @@ export interface MenuOption {
   id: string;
   name: string;
   type: 'size' | 'shot' | 'milk' | 'syrup';
+  price?: number;
   choices: OptionChoice[];
 }
 

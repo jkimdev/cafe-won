@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import MenuManagement from './MenuManagement';
 
 const AdminDashboard: React.FC = () => {
   const { user, signOut } = useAuth();
@@ -165,10 +166,7 @@ const AdminDashboard: React.FC = () => {
         )}
 
         {activeTab === 'menu' && (
-          <div className="bg-white shadow rounded-lg p-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-4 text-left">메뉴 관리</h3>
-            <p className="text-gray-600 text-left">메뉴 관리 기능이 여기에 구현됩니다.</p>
-          </div>
+          <MenuManagement />
         )}
 
         {activeTab === 'analytics' && (

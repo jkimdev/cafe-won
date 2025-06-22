@@ -16,6 +16,7 @@ export const menuItems: MenuItem[] = [
     price: 4500,
     category: 'coffee',
     image: '/images/americano.jpg',
+    isAvailable: true,
     options: [
       {
         id: 'size',
@@ -45,6 +46,7 @@ export const menuItems: MenuItem[] = [
     price: 5500,
     category: 'coffee',
     image: '/images/latte.jpg',
+    isAvailable: true,
     options: [
       {
         id: 'size',
@@ -75,6 +77,7 @@ export const menuItems: MenuItem[] = [
     price: 6500,
     category: 'non-coffee',
     image: '/images/smoothie.jpg',
+    isAvailable: true,
   },
   {
     id: 'cheesecake',
@@ -84,5 +87,6 @@ export const menuItems: MenuItem[] = [
     price: 7500,
     category: 'dessert',
     image: '/images/cheesecake.jpg',
+    isAvailable: true,
   },
 ]; 

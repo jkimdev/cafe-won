@@ -1,60 +1,51 @@
 // Firebase 설정
 // 실제 Firebase 프로젝트 설정으로 교체하세요
 
-const firebaseConfig = {
-  apiKey: "your-api-key",
-  authDomain: "your-project.firebaseapp.com",
-  projectId: "your-project-id",
-  storageBucket: "your-project.appspot.com",
-  messagingSenderId: "your-sender-id",
-  appId: "your-app-id"
-};
+import { firebaseConfig } from '../../firebase-config';
+import { initializeApp } from 'firebase/app';
+import { getAuth } from 'firebase/auth';
+import { getFirestore, collection, doc, getDocs, addDoc, updateDoc, deleteDoc } from 'firebase/firestore';
 
-// Firebase가 설치되지 않은 경우를 위한 임시 구현
-export const auth = {
-  currentUser: null,
-  onAuthStateChanged: (callback: (user: any) => void) => {
-    // 임시 구현
-    callback(null);
+// Firebase 앱 초기화
+const app = initializeApp(firebaseConfig);
+export const auth = getAuth(app);
+export const db = getFirestore(app);
+
+// 메뉴 서비스 타입 정의
+export interface MenuService {
+  getMenus: () => Promise<any[]>;
+  addMenu: (menuData: any) => Promise<any>;
+  updateMenu: (id: string, menuData: any) => Promise<void>;
+  deleteMenu: (id: string) => Promise<void>;
+}
+
+// Firestore CRUD 함수들
+export const menuService: MenuService = {
+  // 메뉴 목록 조회
+  getMenus: async () => {
+    const querySnapshot = await getDocs(collection(db, 'menus'));
+    return querySnapshot.docs.map((doc: any) => ({
+      id: doc.id,
+      ...doc.data()
+    }));
   },
-  signInWithEmailAndPassword: async (email: string, password: string) => {
-    // 임시 구현 - 실제로는 Firebase Auth 사용
-    throw new Error('Firebase가 설치되지 않았습니다. npm install firebase를 실행하세요.');
+  
+  // 메뉴 추가
+  addMenu: async (menuData: any) => {
+    return await addDoc(collection(db, 'menus'), menuData);
   },
-  signOut: async () => {
-    // 임시 구현
-    return Promise.resolve();
+  
+  // 메뉴 수정
+  updateMenu: async (id: string, menuData: any) => {
+    const menuRef = doc(db, 'menus', id);
+    return await updateDoc(menuRef, menuData);
+  },
+  
+  // 메뉴 삭제
+  deleteMenu: async (id: string) => {
+    const menuRef = doc(db, 'menus', id);
+    return await deleteDoc(menuRef);
   }
 };
-
-export const db = {
-  collection: (path: string) => ({
-    add: async (data: any) => {
-      // 임시 구현
-      return Promise.resolve({ id: 'temp-id' });
-    },
-    get: async () => {
-      // 임시 구현
-      return Promise.resolve({ docs: [] });
-    }
-  })
-};
-
-// Firebase가 설치된 경우 실제 Firebase 사용
-try {
-  const { initializeApp } = require('firebase/app');
-  const { getAuth } = require('firebase/auth');
-  const { getFirestore } = require('firebase/firestore');
-  
-  const app = initializeApp(firebaseConfig);
-  const actualAuth = getAuth(app);
-  const actualDb = getFirestore(app);
-  
-  // 실제 Firebase 인스턴스로 교체
-  Object.assign(auth, actualAuth);
-  Object.assign(db, actualDb);
-} catch (error) {
-  console.warn('Firebase가 설치되지 않았습니다. 임시 구현을 사용합니다.');
-}
 
 export default { auth, db }; 
