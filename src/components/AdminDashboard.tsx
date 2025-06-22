@@ -13,7 +13,7 @@ const AdminDashboard: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-50">
       {/* 헤더 */}
       <header className="bg-white shadow">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -112,7 +112,7 @@ const AdminDashboard: React.FC = () => {
                   최근 24시간 내 주문 현황
                 </p>
               </div>
-              <ul className="divide-y divide-gray-200">
+              <ul className="divide-y divide-gray-100">
                 {[
                   { id: '#001', customer: '김철수', items: '아메리카노 2잔', total: '₩8,000', status: '완료' },
                   { id: '#002', customer: '이영희', items: '카페라떼 1잔, 케이크 1개', total: '₩12,000', status: '준비중' },

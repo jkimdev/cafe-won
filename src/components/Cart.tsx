@@ -43,7 +43,7 @@ const Cart: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* 헤더 */}
-      <div className="bg-white shadow-sm border-b">
+      <div>
         <div className="max-w-2xl mx-auto px-4 py-4">
           <div className="flex items-center gap-4">
             <button
@@ -61,10 +61,10 @@ const Cart: React.FC = () => {
         {/* 장바구니 아이템들 */}
         <div className="bg-white rounded-lg shadow-md mb-6">
           {state.items.map(item => (
-            <div key={item.id} className="p-4 border-b last:border-b-0">
+            <div key={item.id} className="p-4 border-b last:border-b-0 border-gray-100">
               <div className="flex items-center gap-4">
                 {/* 썸네일 */}
-                <div className="w-16 h-16 bg-gray-200 rounded-lg flex items-center justify-center">
+                <div className="w-16 h-16 bg-orange-100 rounded-lg flex items-center justify-center">
                   <span className="text-xl">☕</span>
                 </div>
 
@@ -87,14 +87,14 @@ const Cart: React.FC = () => {
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
-                    className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:border-gray-400"
+                    className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center hover:border-gray-300 hover:bg-gray-50"
                   >
                     -
                   </button>
                   <span className="w-8 text-center font-semibold">{item.quantity}</span>
                   <button
                     onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
-                    className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:border-gray-400"
+                    className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center hover:border-gray-300 hover:bg-gray-50"
                   >
                     +
                   </button>

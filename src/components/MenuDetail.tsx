@@ -66,7 +66,7 @@ const MenuDetail: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* 헤더 */}
-      <div className="bg-white shadow-sm border-b">
+      <div>
         <div className="max-w-2xl mx-auto px-4 py-4">
           <div className="flex items-center gap-4">
             <button
@@ -83,7 +83,7 @@ const MenuDetail: React.FC = () => {
       <div className="max-w-2xl mx-auto px-4 py-6">
         {/* 메뉴 이미지 */}
         <div className="bg-white rounded-lg shadow-md overflow-hidden mb-6">
-          <div className="h-64 bg-gray-200 flex items-center justify-center">
+          <div className="h-64 bg-orange-100 flex items-center justify-center">
             <span className="text-6xl">☕</span>
           </div>
         </div>
@@ -92,7 +92,7 @@ const MenuDetail: React.FC = () => {
         <div className="bg-white rounded-lg shadow-md p-6 mb-6 text-left">
           <h2 className="text-2xl font-bold text-gray-800 mb-2">{menuItem.name}</h2>
           <p className="text-gray-600 mb-4">{menuItem.description}</p>
-          <div className="text-2xl font-bold text-orange-600 mb-6 text-left">
+          <div className="text-2xl font-bold text-orange-600 mb-6 text-left`">
             ₩{formatPrice(menuItem.price)}
           </div>
 
@@ -105,10 +105,10 @@ const MenuDetail: React.FC = () => {
                   <button
                     key={choice.id}
                     onClick={() => handleOptionChange(option.id, choice.id)}
-                    className={`p-3 rounded-lg border-2 text-left ${
+                    className={`p-3 rounded-lg border-2 text-left transition-colors ${
                       selectedOptions[option.id] === choice.id
                         ? 'border-orange-600 bg-orange-50 text-orange-600'
-                        : 'border-gray-200 hover:border-gray-300'
+                        : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
                     }`}
                   >
                     <div className="font-medium">{choice.name}</div>
@@ -127,14 +127,14 @@ const MenuDetail: React.FC = () => {
             <div className="flex items-center gap-4">
               <button
                 onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                className="w-10 h-10 rounded-full border-2 border-gray-300 flex items-center justify-center hover:border-gray-400"
+                className="w-10 h-10 rounded-full border-2 border-gray-200 flex items-center justify-center hover:border-gray-300 hover:bg-gray-50 transition-colors"
               >
                 -
               </button>
               <span className="text-xl font-semibold w-12 text-center">{quantity}</span>
               <button
                 onClick={() => setQuantity(quantity + 1)}
-                className="w-10 h-10 rounded-full border-2 border-gray-300 flex items-center justify-center hover:border-gray-400"
+                className="w-10 h-10 rounded-full border-2 border-gray-200 flex items-center justify-center hover:border-gray-300 hover:bg-gray-50 transition-colors"
               >
                 +
               </button>

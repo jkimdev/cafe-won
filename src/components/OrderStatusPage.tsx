@@ -58,7 +58,7 @@ const OrderStatusPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* 헤더 */}
-      <div className="bg-white shadow-sm border-b">
+      <div>
         <div className="max-w-2xl mx-auto px-4 py-4">
           <div className="flex items-center gap-4">
             <button
@@ -108,7 +108,7 @@ const OrderStatusPage: React.FC = () => {
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
                     isCompleted 
                       ? 'bg-green-600 text-white' 
-                      : 'bg-gray-200 text-gray-500'
+                      : 'bg-gray-100 text-gray-500'
                   }`}>
                     {isCompleted ? '✓' : index + 1}
                   </div>
