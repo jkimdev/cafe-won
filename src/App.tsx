@@ -5,7 +5,6 @@ import Home from './components/Home';
 import MenuList from './components/MenuList';
 import MenuDetail from './components/MenuDetail';
 import Cart from './components/Cart';
-import Checkout from './components/Checkout';
 import OrderComplete from './components/OrderComplete';
 import OrderStatusPage from './components/OrderStatusPage';
 import AdminLogin from './components/AdminLogin';
@@ -24,7 +23,6 @@ function App() {
               <Route path="/menu" element={<MenuList />} />
               <Route path="/menu/:id" element={<MenuDetail />} />
               <Route path="/cart" element={<Cart />} />
-              <Route path="/checkout" element={<Checkout />} />
               <Route path="/order-complete/:orderNumber" element={<OrderComplete />} />
               <Route path="/order-status/:orderNumber" element={<OrderStatusPage />} />
               

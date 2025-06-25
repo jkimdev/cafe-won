@@ -1,10 +1,34 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
+import { loadTossPayments, ANONYMOUS } from '@tosspayments/tosspayments-sdk';
+
+const TOSS_CLIENT_KEY = 'test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm'; // 실제 결제위젯 연동 키로 교체
 
 const Cart: React.FC = () => {
   const navigate = useNavigate();
   const { state, dispatch } = useCart();
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [widgets, setWidgets] = useState<any>(null);
+  const paymentMethodRef = useRef<HTMLDivElement>(null);
+  const agreementRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+    async function initWidget() {
+      if (!paymentMethodRef.current || !agreementRef.current) return;
+      const tossPayments = await loadTossPayments(TOSS_CLIENT_KEY);
+      const widgetsInstance = tossPayments.widgets({ customerKey: ANONYMOUS });
+      await widgetsInstance.setAmount({ currency: 'KRW', value: state.totalAmount });
+      await Promise.all([
+        widgetsInstance.renderPaymentMethods({ selector: '#payment-method', variantKey: 'DEFAULT' }),
+        widgetsInstance.renderAgreement({ selector: '#agreement', variantKey: 'AGREEMENT' })
+      ]);
+      if (isMounted) setWidgets(widgetsInstance);
+    }
+    initWidget();
+    return () => { isMounted = false; };
+  }, [state.totalAmount]);
 
   const formatPrice = (price: number) => {
     return price.toLocaleString('ko-KR');
@@ -18,8 +42,21 @@ const Cart: React.FC = () => {
     }
   };
 
-  const handleCheckout = () => {
-    navigate('/checkout');
+  const handlePayment = async () => {
+    if (!widgets) return;
+    setIsProcessing(true);
+    try {
+      await widgets.requestPayment({
+        orderId: `ORD-${Date.now()}`,
+        orderName: state.items.map(i => i.menuItem.name).join(', '),
+        successUrl: window.location.origin + '/order-complete/success',
+        failUrl: window.location.origin + '/order-complete/fail',
+        customerEmail: 'test@example.com',
+        customerName: '비회원',
+      });
+    } catch (e) {
+      setIsProcessing(false);
+    }
   };
 
   if (state.items.length === 0) {
@@ -112,12 +149,27 @@ const Cart: React.FC = () => {
           </div>
         </div>
 
+        {/* 결제위젯 영역 */}
+        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+          <h2 className="text-lg font-semibold text-gray-800 mb-4">결제 방법</h2>
+          <div id="payment-method" ref={paymentMethodRef}></div>
+        </div>
+        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+          <h2 className="text-lg font-semibold text-gray-800 mb-4">이용약관</h2>
+          <div id="agreement" ref={agreementRef}></div>
+        </div>
+
         {/* 결제하기 버튼 */}
         <button
-          onClick={handleCheckout}
-          className="w-full bg-orange-600 text-white font-bold py-4 px-8 rounded-lg text-lg hover:bg-orange-700 transition-colors"
+          onClick={handlePayment}
+          disabled={isProcessing || !widgets}
+          className={`w-full font-bold py-4 px-8 rounded-lg text-lg transition-colors ${
+            isProcessing || !widgets
+              ? 'bg-gray-300 cursor-not-allowed'
+              : 'bg-orange-600 hover:bg-orange-700 text-white'
+          }`}
         >
-          결제하기
+          {isProcessing ? '결제 처리 중...' : '결제하기'}
         </button>
       </div>
     </div>

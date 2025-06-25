@@ -48,4 +48,9 @@ export const menuService: MenuService = {
   }
 };
 
+// 주문 추가 함수
+export const addOrder = async (orderData: any) => {
+  return await addDoc(collection(db, 'orders'), orderData);
+};
+
 export default { auth, db }; 
