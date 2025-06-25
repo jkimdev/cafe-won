@@ -13,6 +13,7 @@ const MenuDetail: React.FC = () => {
   const [menuItem, setMenuItem] = useState<MenuItem | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [optionTotal, setOptionTotal] = useState(0);
 
   useEffect(() => {
     const fetchMenuItem = async () => {
@@ -41,6 +42,22 @@ const MenuDetail: React.FC = () => {
 
     fetchMenuItem();
   }, [id]);
+
+  useEffect(() => {
+    if (!menuItem || !menuItem.options) {
+      setOptionTotal(0);
+      return;
+    }
+    let sum = 0;
+    menuItem.options.forEach(option => {
+      const selectedChoiceId = selectedOptions[option.id];
+      if (selectedChoiceId) {
+        const choice = option.choices.find(c => c.id === selectedChoiceId);
+        if (choice) sum += choice.price;
+      }
+    });
+    setOptionTotal(sum);
+  }, [selectedOptions, menuItem]);
 
   if (loading) {
     return (
@@ -72,10 +89,17 @@ const MenuDetail: React.FC = () => {
   }
 
   const handleOptionChange = (optionId: string, choiceId: string) => {
-    setSelectedOptions(prev => ({
-      ...prev,
-      [optionId]: choiceId
-    }));
+    setSelectedOptions(prev => {
+      if (prev[optionId] === choiceId) {
+        const newOptions = { ...prev };
+        delete newOptions[optionId];
+        return newOptions;
+      }
+      return {
+        ...prev,
+        [optionId]: choiceId
+      };
+    });
   };
 
   const handleAddToCart = () => {
@@ -160,8 +184,8 @@ const MenuDetail: React.FC = () => {
           {menuItem.description && (
             <p className="text-gray-600 mb-4">{menuItem.description}</p>
           )}
-          <div className="text-2xl font-bold text-orange-600 mb-6 text-left">
-            ₩{formatPrice(menuItem.price)}
+          <div className="text-2xl font-bold text-orange-600 mb-8 text-left">
+            ₩{formatPrice((menuItem.price + optionTotal) * quantity)}
           </div>
 
           {/* 옵션 선택 */}
@@ -227,4 +251,4 @@ const MenuDetail: React.FC = () => {
   );
 };
 
-export default MenuDetail; 
+export default MenuDetail;
