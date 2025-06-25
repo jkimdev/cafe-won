@@ -126,7 +126,6 @@ src/
 - `/menu` - 메뉴 리스트
 - `/menu/:id` - 메뉴 상세
 - `/cart` - 장바구니
-- `/checkout` - 결제 페이지
 - `/order-complete/:orderNumber` - 주문 완료
 - `/order-status/:orderNumber` - 주문 상태
 

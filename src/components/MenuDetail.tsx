@@ -195,7 +195,12 @@ const MenuDetail: React.FC = () => {
 
         {/* 메뉴 정보 */}
         <div className="bg-white rounded-lg shadow-md p-6 mb-6 text-left">
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">{menuItem.name}</h2>
+          <h2 className="text-2xl font-bold text-gray-800 mb-2 flex items-center gap-3">
+            {menuItem.name}
+            {!menuItem.isAvailable && (
+              <span className="text-xs font-semibold bg-red-100 text-red-600 px-2 py-1 rounded">품절</span>
+            )}
+          </h2>
           <p className="text-gray-600 mb-2">{menuItem.nameEn}</p>
           {menuItem.description && (
             <p className="text-gray-600 mb-4">{menuItem.description}</p>
@@ -248,30 +253,24 @@ const MenuDetail: React.FC = () => {
               </button>
             </div>
           </div>
-        </div>
 
-        {/* 장바구니/바로결제 버튼 영역 */}
-        <div className="flex flex-col gap-3 mt-6">
-          <button
-            onClick={handleAddToCart}
-            disabled={!menuItem.isAvailable}
-            className={`w-full font-bold py-4 px-8 rounded-lg text-lg transition-colors border-2 border-orange-600 text-orange-600 bg-white hover:bg-orange-50 ${
-              menuItem.isAvailable ? '' : 'cursor-not-allowed opacity-60'
-            }`}
-          >
-            {menuItem.isAvailable ? '장바구니에 담기' : '품절'}
-          </button>
-          <button
-            onClick={handleBuyNow}
-            disabled={!menuItem.isAvailable}
-            className={`w-full font-bold py-4 px-8 rounded-lg text-lg transition-colors ${
-              menuItem.isAvailable
-                ? 'bg-orange-600 text-white hover:bg-orange-700'
-                : 'bg-gray-400 text-gray-600 cursor-not-allowed'
-            }`}
-          >
-            바로 결제하기
-          </button>
+          {/* 장바구니/바로결제 버튼 영역: 품절이 아닐 때만 노출 */}
+          {menuItem.isAvailable && (
+            <div className="flex flex-col gap-3 mt-6">
+              <button
+                onClick={handleAddToCart}
+                className="w-full font-bold py-4 px-8 rounded-lg text-lg transition-colors border-2 border-orange-600 text-orange-600 bg-white hover:bg-orange-50"
+              >
+                장바구니에 담기
+              </button>
+              <button
+                onClick={handleBuyNow}
+                className="w-full font-bold py-4 px-8 rounded-lg text-lg transition-colors bg-orange-600 text-white hover:bg-orange-700"
+              >
+                바로 결제하기
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>

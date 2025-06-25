@@ -41,8 +41,8 @@ const MenuList: React.FC = () => {
   }, []);
 
   const filteredItems = selectedCategory === 'all' 
-    ? menuItems.filter(item => item.isAvailable)
-    : menuItems.filter(item => item.category === selectedCategory && item.isAvailable);
+    ? menuItems
+    : menuItems.filter(item => item.category === selectedCategory);
 
   const getMenuIcon = (category: string) => {
     const categoryData = categories.find(cat => cat.id === category);
