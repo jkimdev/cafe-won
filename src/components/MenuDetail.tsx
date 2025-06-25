@@ -122,7 +122,23 @@ const MenuDetail: React.FC = () => {
       }
     });
 
-    navigate('/cart');
+    navigate('/menu'); // 장바구니에만 담고 메뉴 페이지로 이동
+  };
+
+  const handleBuyNow = () => {
+    // 장바구니에 이미 동일한 메뉴/옵션/수량 조합이 있는지 확인
+    // (간단히 menuItem.id, selectedOptions, quantity로 비교)
+    // 실제 장바구니 구조에 따라 중복 체크 로직을 조정할 수 있음
+    const cartItems = JSON.parse(localStorage.getItem('cart') || '[]');
+    const isAlreadyInCart = cartItems.some((item: any) =>
+      item.menuItem.id === menuItem?.id &&
+      JSON.stringify(item.selectedOptions) === JSON.stringify(selectedOptions) &&
+      item.quantity === quantity
+    );
+    if (!isAlreadyInCart) {
+      handleAddToCart(); // 장바구니에 추가
+    }
+    navigate('/cart'); // 결제(장바구니) 페이지로 이동
   };
 
   const formatPrice = (price: number) => {
@@ -234,18 +250,29 @@ const MenuDetail: React.FC = () => {
           </div>
         </div>
 
-        {/* 장바구니 담기 버튼 */}
-        <button
-          onClick={handleAddToCart}
-          disabled={!menuItem.isAvailable}
-          className={`w-full font-bold py-4 px-8 rounded-lg text-lg transition-colors ${
-            menuItem.isAvailable
-              ? 'bg-orange-600 text-white hover:bg-orange-700'
-              : 'bg-gray-400 text-gray-600 cursor-not-allowed'
-          }`}
-        >
-          {menuItem.isAvailable ? '장바구니에 담기' : '품절'}
-        </button>
+        {/* 장바구니/바로결제 버튼 영역 */}
+        <div className="flex flex-col gap-3 mt-6">
+          <button
+            onClick={handleAddToCart}
+            disabled={!menuItem.isAvailable}
+            className={`w-full font-bold py-4 px-8 rounded-lg text-lg transition-colors border-2 border-orange-600 text-orange-600 bg-white hover:bg-orange-50 ${
+              menuItem.isAvailable ? '' : 'cursor-not-allowed opacity-60'
+            }`}
+          >
+            {menuItem.isAvailable ? '장바구니에 담기' : '품절'}
+          </button>
+          <button
+            onClick={handleBuyNow}
+            disabled={!menuItem.isAvailable}
+            className={`w-full font-bold py-4 px-8 rounded-lg text-lg transition-colors ${
+              menuItem.isAvailable
+                ? 'bg-orange-600 text-white hover:bg-orange-700'
+                : 'bg-gray-400 text-gray-600 cursor-not-allowed'
+            }`}
+          >
+            바로 결제하기
+          </button>
+        </div>
       </div>
     </div>
   );
