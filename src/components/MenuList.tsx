@@ -14,9 +14,12 @@ const MenuList: React.FC = () => {
   // 카테고리 데이터 (Firestore에서 가져올 수 있지만 일단 하드코딩)
   const defaultCategories: Category[] = [
     { id: 'coffee', name: '커피', icon: '☕' },
-    { id: 'non-coffee', name: '논커피', icon: '🥤' },
-    { id: 'dessert', name: '디저트', icon: '🍰' },
-    { id: 'food', name: '푸드', icon: '🥪' },
+    { id: 'non_coffee', name: '논커피', icon: '🥤' },
+    { id: 'ade', name: '에이드', icon: '🍹' },
+    { id: 'hand_made_tea', name: '수제차', icon: '🍵' },
+    { id: 'frappe_juice', name: '프라페/주스', icon: '🍹' },
+    { id: 'iced_tea', name: '아이스티', icon: '🍹' },
+    { id: 'organic_tea', name: '유기농차', icon: '🍵' },
   ];
 
   useEffect(() => {
@@ -32,6 +35,7 @@ const MenuList: React.FC = () => {
       } catch (err) {
         console.error('메뉴 데이터를 가져오는 중 오류 발생:', err);
         setError('메뉴 데이터를 불러오는데 실패했습니다.');
+        setMenuItems([]); // Firestore 실패 시 메뉴 없음
       } finally {
         setLoading(false);
       }
@@ -43,6 +47,9 @@ const MenuList: React.FC = () => {
   const filteredItems = selectedCategory === 'all' 
     ? menuItems
     : menuItems.filter(item => item.category === selectedCategory);
+
+  // 메뉴를 order 순으로 정렬
+  const sortedItems = [...filteredItems].sort((a, b) => (a.order || 0) - (b.order || 0));
 
   const getMenuIcon = (category: string) => {
     const categoryData = categories.find(cat => cat.id === category);
@@ -131,14 +138,14 @@ const MenuList: React.FC = () => {
 
       {/* 메뉴 리스트 */}
       <div className="max-w-4xl mx-auto px-4 py-6">
-        {filteredItems.length === 0 ? (
+        {sortedItems.length === 0 ? (
           <div className="bg-white rounded-lg shadow-md p-8 text-center">
             <p className="text-gray-600">해당 카테고리의 메뉴가 없습니다.</p>
           </div>
         ) : (
           <div className="bg-white rounded-lg shadow-md overflow-hidden">
             <div className="divide-y divide-gray-100">
-              {filteredItems.map(item => (
+              {sortedItems.map(item => (
                 <div
                   key={item.id}
                   onClick={() => navigate(`/menu/${item.id}`)}

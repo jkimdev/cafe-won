@@ -89,6 +89,7 @@ const MenuDetail: React.FC = () => {
   }
 
   const handleOptionChange = (optionId: string, choiceId: string) => {
+    // 옵션이 하나뿐이어도 해제 가능
     setSelectedOptions(prev => {
       if (prev[optionId] === choiceId) {
         const newOptions = { ...prev };
@@ -103,15 +104,9 @@ const MenuDetail: React.FC = () => {
   };
 
   const handleAddToCart = () => {
-    // 기본 옵션 설정
+    // 선택된 옵션만 반영 (자동 선택 없음)
     const finalOptions = { ...selectedOptions };
-    if (menuItem.options) {
-      menuItem.options.forEach(option => {
-        if (!finalOptions[option.id]) {
-          finalOptions[option.id] = option.choices[0]?.id || '';
-        }
-      });
-    }
+    // menuItem.options가 있어도, 사용자가 선택하지 않은 옵션은 추가하지 않음
 
     dispatch({
       type: 'ADD_ITEM',
@@ -160,8 +155,13 @@ const MenuDetail: React.FC = () => {
     }
   };
 
+  // 모든 옵션이 선택되어야 버튼 활성화
+  const allOptionsSelected = menuItem?.options
+    ? menuItem.options.every(option => selectedOptions[option.id])
+    : true;
+
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 pb-6">
       {/* 헤더 */}
       <div>
         <div className="max-w-2xl mx-auto px-4 py-4">
@@ -214,22 +214,26 @@ const MenuDetail: React.FC = () => {
             <div key={option.id} className="mb-6">
               <h3 className="text-lg font-semibold text-gray-800 mb-3 text-left">{option.name}</h3>
               <div className="grid grid-cols-2 gap-3">
-                {option.choices.map(choice => (
-                  <button
-                    key={choice.id}
-                    onClick={() => handleOptionChange(option.id, choice.id)}
-                    className={`p-3 rounded-lg border-2 text-left transition-colors ${
-                      selectedOptions[option.id] === choice.id
-                        ? 'border-orange-600 bg-orange-50 text-orange-600'
-                        : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
-                    }`}
-                  >
-                    <div className="font-medium">{choice.name}</div>
-                    {choice.price > 0 && (
-                      <div className="text-sm text-gray-600">+₩{formatPrice(choice.price)}</div>
-                    )}
-                  </button>
-                ))}
+                {option.choices.map(choice => {
+                  const isSelected = selectedOptions[option.id] === choice.id;
+                  return (
+                    <button
+                      key={choice.id}
+                      onClick={() => handleOptionChange(option.id, choice.id)}
+                      className={`p-3 rounded-lg border-2 text-left transition-colors ${
+                        isSelected
+                          ? 'border-orange-600 bg-orange-50 text-orange-600'
+                          : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                      }`}
+                      type="button"
+                    >
+                      <div className="font-medium">{choice.name}</div>
+                      {choice.price > 0 && (
+                        <div className="text-sm text-gray-600">+₩{formatPrice(choice.price)}</div>
+                      )}
+                    </button>
+                  );
+                })}
               </div>
             </div>
           ))}
@@ -254,21 +258,33 @@ const MenuDetail: React.FC = () => {
             </div>
           </div>
 
-          {/* 장바구니/바로결제 버튼 영역: 품절이 아닐 때만 노출 */}
+          {/* 하단 고정 버튼 바 */}
           {menuItem.isAvailable && (
-            <div className="flex flex-col gap-3 mt-6">
-              <button
-                onClick={handleAddToCart}
-                className="w-full font-bold py-4 px-8 rounded-lg text-lg transition-colors border-2 border-orange-600 text-orange-600 bg-white hover:bg-orange-50"
-              >
-                장바구니에 담기
-              </button>
-              <button
-                onClick={handleBuyNow}
-                className="w-full font-bold py-4 px-8 rounded-lg text-lg transition-colors bg-orange-600 text-white hover:bg-orange-700"
-              >
-                바로 결제하기
-              </button>
+            <div className="fixed bottom-0 left-0 w-full bg-white shadow-[0_-2px_8px_rgba(0,0,0,0.04)] border-t border-gray-200 z-20">
+              <div className="max-w-2xl mx-auto flex gap-3 px-4 py-3">
+                <button
+                  onClick={handleAddToCart}
+                  disabled={!allOptionsSelected}
+                  className={`flex-1 py-3 rounded-lg text-lg font-bold border transition-colors
+                    ${allOptionsSelected
+                      ? 'border-orange-600 text-orange-600 bg-white hover:bg-orange-50'
+                      : 'border-gray-300 text-gray-400 bg-gray-100 cursor-not-allowed'}
+                  `}
+                >
+                  장바구니에 담기
+                </button>
+                <button
+                  onClick={handleBuyNow}
+                  disabled={!allOptionsSelected}
+                  className={`flex-1 py-3 rounded-lg text-lg font-bold transition-colors
+                    ${allOptionsSelected
+                      ? 'bg-orange-600 text-white hover:bg-orange-700'
+                      : 'bg-gray-300 text-gray-400 cursor-not-allowed'}
+                  `}
+                >
+                  바로 결제하기
+                </button>
+              </div>
             </div>
           )}
         </div>

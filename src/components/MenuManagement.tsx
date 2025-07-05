@@ -20,9 +20,12 @@ const MenuManagement: React.FC = () => {
 
   const categories: Category[] = [
     { id: 'coffee', name: '커피', icon: '☕' },
-    { id: 'non-coffee', name: '논커피', icon: '🥤' },
-    { id: 'dessert', name: '디저트', icon: '🍰' },
-    { id: 'food', name: '푸드', icon: '🥪' },
+    { id: 'non_coffee', name: '논커피', icon: '🥤' },
+    { id: 'ade', name: '에이드', icon: '🍹' },
+    { id: 'hand_made_tea', name: '수제차', icon: '🍵' },
+    { id: 'frappe_juice', name: '프라페/주스', icon: '🍹' },
+    { id: 'iced_tea', name: '아이스티', icon: '🍹' },
+    { id: 'organic_tea', name: '유기농차', icon: '🍵' },
   ];
 
   useEffect(() => {

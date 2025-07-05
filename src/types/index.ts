@@ -14,7 +14,7 @@ export interface MenuItem {
 export interface MenuOption {
   id: string;
   name: string;
-  type: 'size' | 'shot' | 'milk' | 'syrup';
+  type: 'shot' | 'hot_cold' | 'whipped_cream';
   price?: number;
   choices: OptionChoice[];
 }
